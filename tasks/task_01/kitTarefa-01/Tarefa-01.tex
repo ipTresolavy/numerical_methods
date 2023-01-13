@@ -1,0 +1,156 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage[dvipdfmx]{graphicx} 
+\usepackage{bmpsize}
+\usepackage{bbm}
+
+
+
+\title{MAP3122 - Métodos Numéricos e Aplicações\\ Professor Roma\\ }
+\author{TAREFA \#01 --- SEMANA 01\\ Suba até 2023.01.23, 23:55h.}
+\date{}
+
+\begin{document}
+\maketitle
+
+%\noindent Professor Alexandre Roma\\
+%roma ``at'' ime.usp.br\\
+%SALA 288-A, telefones 3091-6144 ou 3091-6136 (SecMAP)\\
+%Atendimento 3as e 5as feiras - ligue ou passe um e-mail antes.
+
+    \vspace{-3mm}
+    
+    \mbox{}\hfill  --- VERSÃO 2023.01.03
+
+\vspace{3mm}
+
+Por favor, leia atentamente. Os objetivos principais das tarefas são o aprendizado contínuo e o amadurecimento técnico.
+Embora todas as questões  possam ser resolvidas de forma individual, esta tarefa foi preparada para ser resolvida em dupla podendo até mesmo ser discutida coletivamente. Valem as seguintes orientações para a TAREFA \#01:
+
+\begin{enumerate}
+ 
+ \item Todos os alunos devem entregar a solução de todas as questões, independentemente se elas forem resolvidas individualmente, em dupla ou coletivamente.  
+ \item Nunca digite as soluções de questões teóricas. Estas devem ser feitas à mão pelo aluno e carregadas no  formato pdf. IMPORTANTE: tenha sempre o original com você para uso em aula (material de consulta).
+ \item Questões computacionais, além de um arquivo pdf contendo um relato técnico sucinto (exemplo na página da disciplina), devem ser acom\-panha\-das pelo programa usado. Qualquer linguagem de programação pode ser usada.
+ \item Salvo menção em contrário, todo o método numérico usado deve ser programado pela dupla.
+ \item Ajude sim, sempre que possível, um colega com dificuldade mas  não preju\-dique o aprendizado dele fornecendo soluções prontas...
+ \item Em caso de dúvida, use o Fórum do Estudante. Por favor, não envie suas dúvidas diretamente ao professor.
+ Que tenhamos todos um semestre produtivo!
+\end{enumerate}
+  
+\noindent {\bf ATENÇÃO:}\, alguma(s) dentre as questões abaixo pode(m) valer nota e/ou ser(em) incluída(s) em outras atividades durante o semestre.
+\mbox{}
+\vspace{5mm}
+
+\section{QUESTÃO COMPUTACIONAL}
+{\it ``Boa conduta'' no traçado de gráficos.}
+
+\vspace{5mm}
+
+Usando a linguagem com a qual se pretende programar regularmente na disciplina, trace num mesmo sistema cartesiano de eixos  os gráficos de 
+\[y(t)=\cos(m\,t),\quad -\pi\le t\le +\pi,\]
+para os valores de $m=1,2$ e 3. Convencionaremos como sendo uma ``boa conduta gráfica'' o seguinte:
+\begin{enumerate}
+ \item Não use cores, pois elas dificultam a impressão em papel caso ela seja necessária.
+ \item Curvas diferentes usam linhas com estilos diferentes: ponto-ponto-ponto, traço-ponto-traço, etc. No contexto de equações diferenciais, apenas a solução exata poderá ser representada por linha contínua. 
+ \item Coloque legenda para identificar cada curva.
+ \item Coloque nomes nos sistemas de eixo e unidades métricas (ou ``adimensional'' se for o caso).
+ \item Gráficos têm título!
+\end{enumerate}
+
+\section{QUESTÃO COMPUTACIONAL}
+{\it Tabelas de convergência numérica para verificar a correta implementação (e para observar o comportamento do método em aplicações para as quais não se tem solução exata conhecida).}
+
+\vspace{5mm}
+
+Ao implementar métodos numéricos para resolver   uma equação diferencial ordinária com condição inicial (Problema de Cauchy), 
+\begin{eqnarray}\label{convEuler}
+    \begin{array}{rcl}
+    \dot{y}(t)  = f(t,y(t)), & & t_0<t\le T,\qquad y(t_0) = y_0,\\
+    \end{array} 
+\end{eqnarray}
+precisamos confeccionar {\it tabelas de convergência numérica} tanto para veri\-ficar a correta implementação do método quanto para observar, posteriormente, o comportamento que o método apresenta no problema de interesse.
+A Tabela~\ref{tabmodel-1} é um exemplo típico de um estudo de convergência para verificar a correta implementação de um método de primeira ordem. Para confeccioná-la, usamos um problema com solução exata conhecida: é a estratégia de ``depuração via solução manufaturada''. Por simplicidade, aqui construímos a sequência $\eta(T,h_n)$ de aproximações numéricas da solução exata em $t=T$, $y(T)$, calculadas pelo método implementado  à medida que usa\-mos passos de integração progressivamente menores, $h_n$. A análise é baseada  observando-se como  vai a zero o valor absoluto do {\it erro de discretização global}, 
+$\left|e(T, h_n)\right|=\left|y(T)-\eta(T,h_n)\right|,$ reportado na terceira coluna da Tabela~\ref{tabmodel-1}.
+
+\begin{table}[!ht]
+\centering
+\begin{tabular}{rccc}\hline\hline\\
+ $n$ &$h_n=\displaystyle \frac{(T-t_0)}{n}$ & $\left|e(T, h_n)\right|$  & ordem $p$\\\\
+	\hline\hline
+	\\
+  128 &  1.95312e-03 &  1.30556e-11 &  ----------- \\
+  256 &  9.76562e-04 &  1.01275e-11 &  3.66390e-01 \\
+  512 &  4.88281e-04 &  6.49856e-12 &  6.40090e-01 \\
+ 1024 &  2.44141e-04 &  3.70427e-12 &  8.10930e-01 \\
+ 2048 &  1.22070e-04 &  1.98031e-12 &  9.03467e-01 \\
+ 4096 &  6.10352e-05 &  1.02417e-12 &  9.51272e-01 \\
+ 8192 &  3.05176e-05 &  5.20845e-13 &  9.75525e-01 \\
+16384 &  1.52588e-05 &  2.62646e-13 &  9.87736e-01 \\
+		\hline\hline
+\end{tabular}
+\caption{Método de Euler aplicado ao Problema de Cauchy~(\ref{convEuler}) em $t=T$. 
+}
+\label{tabmodel-1}
+\end{table}
+
+Como veremos, para tais métodos numéricos a {\it ordem de convergência}\, é O$(h^p)$, onde $p$ pode ser estimado por
+\[ p\approx  
+\frac{ \log\left(\left|e(T,h_{n})/e(T,h_{n+1})\right|\right) }
+     { \log\left(h_{n}/h_{n+1} \right)}
+,\quad p\in \{0,1,2,..\}.
+\]
+Em geral, mas não necessariamente sempre, a razão $h_{n}/h_{n+1}=r$, $n=1,2,\ldots$, com $r>1$ constante. Neste caso, temos
+\[ p\approx  
+\log_r\left(\left|e(T,h_n)/e(T,h_{n+1})\right|\right),\quad p\in \{0,1,2,..\}.
+\]
+
+Observando a quarta coluna, vemos que o método implementado se comporta {\it assin\-toticamente}\, como um método de {\it primeira ordem}, isto é, $p$ tende a $1$ à medida que $h$ tende a $0$. Também dizemos que ele é um método de 
+{\it ordem 1} (no instante $t=T$). Veja que nesse caso o erro é diretamente propocional a $h$: se o passo de integração cai por 2 o erro também deve cair aproximadamente por 2. Outros detalhes sobre as informações contidas em cada coluna, no momento, não são relevantes pois eles serão vistos {\it exaustivamente} em breve. O objetivo desta questão é preparar o aluno para confeccionar tais tabelas em \LaTeX. 
+
+Para tal, podemos por exemplo formatar a saída de nosso programa e direcioná-la à tela (ou a um arquivo de texto) e depois usar recursos de edição do tipo {\it cut/paste}. O comando \LaTeX\, que gerou a Tabela~\ref{tabmodel-1} encontra-se no arquivo fonte desta tarefa, ``Tarefa-01.tex''. O programa  pode gerar um arquivo de saída do tipo texto contendo
+\begin{verbatim}
+          128 &  1.95312e-03 &  1.30556e-11 &  ----------- \\
+          256 &  9.76562e-04 &  1.01275e-11 &  3.66390e-01 \\
+              .
+              .
+              .    
+        16384 &  1.52588e-05 &  2.62646e-13 &  9.87736e-01 \\
+\end{verbatim}
+que, posteriormente, podemos recortar e colar no arquivo .tex o qual já estaria preparado com os comandos
+\begin{verbatim}
+\begin{table}[!ht]
+    \centering
+    \begin{tabular}{rccc}
+    \hline\hline\\
+          $n$ & $h_n=\displaystyle \frac{(T-t_0)}{n}$ 
+              & $\left|e(T, h_n)\right|$  & ordem $p$\\\\
+   \hline\hline\\
+   
+   [RECORTE E COLE SEUS RESULTADOS AQUI]
+   
+   \hline\hline \end{tabular}
+   \caption{SUA LEGENDA AQUI.}\label{SEU LABEL AQUI}
+\end{table}
+\end{verbatim}
+
+Não é obrigatório, mas você pode partir dos programas e dos fontes \LaTeX\quad   disponibilizados na página da disciplina (material suplementar) e no ``kitTarefa-01.zip'' para resolver essa questão. Faça, no mínimo, o seguinte:
+
+\begin{enumerate}
+ \item Manufature um problema de valor inicial com apenas uma variável de estado que tenha solução ``suave'' conhecida, confeccione a tabela de convergência usando o erro de discretização global no instante de tempo final e observe a ordem exibida pelo Método de Euler à medida que o passo de integração vai a zero.
+ \item Repita o procedimento para um problema que tenha duas variáveis de estado (bidimensional), diferente do sistema massa-mola. Use a norma do máximo para o estudo de convergência.
+ \item Use o Método de Euler para resolver um problema bidimensional (com duas variáveis de estado) por exemplo o de presa-predador (equação de Lotka-Volterra) e observe o comportamento de convergência exibido pelo método à medida que o passo de integração vai a zero. Use a norma euclididana para construir sua tabela.
+\end{enumerate}
+
+\vspace{3mm}
+Inclua traçados das variáveis de estado para vários passos de integração, sempre seguindo a ``boa conduta gráfica''. Faça comentários e análises pertinentes.
+
+\vspace{3mm}\noindent
+{\bf IMPORTANTE: é preciso discutir mais e detalhar, é claro. Tais discussões serão feitas sob demanda dos alunos. Os resultados devem ser reportados de forma organizada e de maneira que possam ser reproduzidos por qualquer colega da turma. Há um exemplo de como reportar na página da disciplina (``material suplementar'') que pode servir de ponto de partida caso queira. É esperado apenas um relato curto.}
+
+\section{COMENTÁRIOS FINAIS}
+    Acho importante dar um caráter ``instrumental'' à disciplina. O uso do \LaTeX\quad (e.g. via overleaf.com) e a ``boa conduta'' no traçado de gráficos têm este propósito. Boas apresentações valorizam (e muito) a produção intelectual e o esforço de vocês. Trabalho coletivo saudável melhora a famosa ``dinâmica de grupo''.
+\end{document}
+
+
