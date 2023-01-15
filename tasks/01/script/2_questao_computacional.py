@@ -23,16 +23,19 @@ QNTD_PASSOS_INICIAL = 4
 FATOR_MULTIPLICATIVO_DA_QUANTIDADE_DE_PASSOS = 2
 PASSO_INICIAL = (FIM_INTERVALO - INICIO_INTERVALO)/QNTD_PASSOS_INICIAL
 
-def y_e(T):
+def y_e_1(T):
     return np.cos(T)*np.exp(-5*T)
 
-def f(t, y):
+def f_1(t, y):
     return -5*y - np.exp(-5*t)*np.sin(t)
 
-def phi(t, y, h, f):
-        return f(t, y)
+def phi_1(t, y, h, f):
+    """
+    Euler's method discretization function
+    """
+    return f(t, y)
 
-def numerical_approximation(T, h_n):
+def one_variable_euler(T, h_n, phi):
     t_0 = INICIO_INTERVALO
 
     # definindo a sequência de passos no tempo
@@ -40,12 +43,12 @@ def numerical_approximation(T, h_n):
     y_k = [np.array(CONDICAO_INICIAL)]
 
     for t_k in t:
-        y_k.append(y_k[-1] + h_n*phi(t_k, y_k[-1], h_n, f))
+        y_k.append(y_k[-1] + h_n*phi(t_k, y_k[-1], h_n, f_1))
 
     return y_k[-1]
 
-def global_error(T, h_n):
-    return y_e(T) - numerical_approximation(T, h_n)
+def global_error(T, h_n, y_e, numerical_approximation, phi):
+    return y_e(T) - numerical_approximation(T, h_n, phi)
 
 def main():
     print("TABELA DE VERIFICAÇÃO DE SOLUÇÃO MANUFATURADA");
@@ -53,7 +56,7 @@ def main():
     for caso in range(1, NO_DE_CASOS):
         n = QNTD_PASSOS_INICIAL*(FATOR_MULTIPLICATIVO_DA_QUANTIDADE_DE_PASSOS**(caso-1))
         h_n = (FIM_INTERVALO - INICIO_INTERVALO)/n
-        e = abs(global_error(FIM_INTERVALO, h_n))
+        e = abs(global_error(FIM_INTERVALO, h_n, y_e_1, one_variable_euler, phi_1))
         ordem__p = np.log(abs(e__anterior/e))/np.log(h_n__anterior/h_n) if caso != 1 else 0
 
         print("%5d & %9.3e & %9.3e & %9.3e \\\\" % (n,h_n,e,ordem__p));
