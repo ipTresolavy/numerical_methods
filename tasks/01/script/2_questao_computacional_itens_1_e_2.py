@@ -73,7 +73,7 @@ def main():
             n = QNTD_PASSOS_INICIAL*(FATOR_MULTIPLICATIVO_DA_QUANTIDADE_DE_PASSOS**(caso-1))
             h_n = (FIM_INTERVALO - INICIO_INTERVALO)/n
             e = np.max(abs(global_error(FIM_INTERVALO, h_n, y_e[i], euler, f[i])))
-            ordem__p = np.log(abs(e__anterior/e))/np.log(h_n__anterior/h_n) if caso != 1 else 0
+            ordem__p = np.log(abs(e__anterior/e))/np.log(FATOR_MULTIPLICATIVO_DA_QUANTIDADE_DE_PASSOS) if caso != 1 else 0
 
             print("%5d & %9.3e & %9.3e & %9.3e \\\\" % (n,h_n,e,ordem__p));
 
