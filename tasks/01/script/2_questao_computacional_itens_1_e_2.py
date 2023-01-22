@@ -48,12 +48,12 @@ def euler(T, h_n, f):
 
     # definindo a sequência de passos no tempo
     t = np.arange(t_0, T + h_n, h_n)
-    y_k = np.array(CONDICOES_INICIAIS[CASO])
+    y_k = [np.array(CONDICOES_INICIAIS[CASO])]
 
     for t_k in t:
-        y_k = y_k + h_n*f(t_k, y_k)
+        y_k.append(y_k[-1] + h_n*f(t_k, y_k[-1]))
 
-    return y_k
+    return y_k[-1]
 
 def global_error(T, h_n, y_e, numerical_approximation, f):
     return y_e(T) - numerical_approximation(T, h_n, f)
