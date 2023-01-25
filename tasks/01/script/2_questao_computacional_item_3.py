@@ -62,7 +62,7 @@ def global_error_estimate(T, h_n, numerical_approximation, f):
 
 def main():
 
-    print("TABELA DE VERIFICAÇÃO DE ");
+    print("TABELA DE VERIFICAÇÃO DE UM PROBLEMA DE LOTKA-VOLTERRA");
 
     for caso in range(1, NO_DE_CASOS + 1):
         n = QNTD_PASSOS_INICIAL*(FATOR_MULTIPLICATIVO_DA_QUANTIDADE_DE_PASSOS**(caso-1))

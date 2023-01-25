@@ -30,19 +30,22 @@ def main():
     y_2 = np.cos(2*t)
     y_3 = np.cos(3*t)
 
+    fig, ax = plt.subplots(figsize=(3*np.pi,3))
+
     # traçando o gráfico das funções
-    plt.plot(t, y_1, color="black", linestyle="dotted",
+    cos1 = ax.plot(t, y_1, color="black", linestyle="dotted",
             label="cos(t) adimensional")
-    plt.plot(t, y_2, color="black", linestyle="dashed",
+    cos2 = ax.plot(t, y_2, color="black", linestyle="dashed",
             label="cos(2t) adimensional")
-    plt.plot(t, y_3, color="black", linestyle="dashdot",
+    cos3 = ax.plot(t, y_3, color="black", linestyle="dashdot",
             label="cos(3t) adimensional")
 
     # adicionando descrições ao gráfico
-    plt.xlabel("ângulo t (em rad)")
-    plt.ylabel("variáveis de estado")
-    plt.title("Traçado das funções coseno para 3 frequências angulares distintas")
-    plt.legend()
+    ax.set_xlabel("ângulo t (em rad)")
+    ax.set_ylabel("variáveis de estado")
+    ax.set_title("Traçado das funções coseno para 3 frequências angulares distintas", size=12)
+    ax.legend(bbox_to_anchor=(1.0, 0.5), loc="center left",)
+    fig.tight_layout()
     plt.show()
 
 
