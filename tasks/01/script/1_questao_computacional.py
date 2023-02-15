@@ -1,5 +1,5 @@
 # autor: Igor Pontes Tresolavy
-# autor: Thiago Antice Rodrigues de Souza
+# autor: Thiago Antici Rodrigues de Souza
 
 """
 Traçando o gráfico y(t) = cos(mt), -pi <= t <= pi
