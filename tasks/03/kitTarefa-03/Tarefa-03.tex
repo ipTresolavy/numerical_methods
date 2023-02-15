@@ -1,0 +1,90 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage[dvipdfmx]{graphicx} 
+\usepackage{bmpsize}
+\usepackage{bbm}
+\usepackage{comment}
+
+
+
+\title{MAP3122 - Métodos Numéricos e Aplicações\\ Professor Roma\\ }
+\author{TAREFA \#03 --- SEMANA 04\\ Suba até 2023.02.19, 23:55h.}
+\date{}
+
+\begin{document}
+\maketitle
+
+%\noindent Professor Alexandre Roma\\
+%roma ``at'' ime.usp.br\\
+%SALA 288-A, telefones 3091-6144 ou 3091-6136 (SecMAP)\\
+%Atendimento 3as e 5as feiras - ligue ou passe um e-mail antes.
+
+    \vspace{-3mm}
+    
+    \mbox{}\hfill  --- VERSÃO 2023.01.28
+
+\vspace{3mm}
+
+Por favor, leia atentamente. Os objetivos principais das tarefas são o aprendizado contínuo e o amadurecimento técnico.
+Embora todas as questões  possam ser resolvidas de forma individual, esta tarefa foi preparada para ser resolvida em dupla podendo até mesmo ser discutida coletivamente. Valem as seguintes orientações para a TAREFA \#03:
+
+\begin{enumerate}
+ 
+ \item Todos os alunos devem entregar a solução de todas as questões, independentemente se elas forem resolvidas individualmente, em dupla ou coletivamente. Coloque sempre o nome de todos os autores e cite referências bibliográficas se parte do material não for de autoria da dupla. 
+ \item Nunca digite as soluções de questões teóricas. Manuscreva-as, ambos os alunos da dupla, e carregue-as no  formato pdf. IMPORTANTE: tenha sempre o original com você para uso em aula (como material de consulta).
+ \item Questões computacionais, além de um arquivo pdf contendo um relato técnico sucinto (exemplos para adaptar na página da disciplina), devem ser acom\-panha\-das pelo código fonte do programa. Qualquer linguagem de programação pode ser usada. Insira trechos de código no texto só se isso for essencial à explicação. Procure dar preferência ao uso de algoritmos e deixe tais inserções para apêndices específicos os quais devem ser citados no texto (Google: {\it algoritmos em}\, \LaTeX). Suba também sempre a estrutura \LaTeX\, completa, ``zipada''.
+ \item Salvo menção em contrário, todo o método numérico usado deve ser programado pela dupla. Funções matemáticas e.g. seno, cosseno, exponencial, \dots, podem ser diretamente usadas, naturalmente.
+ \item Ajude sim, sempre que possível, um colega com dificuldade mas  não preju\-dique o aprendizado dele fornecendo soluções prontas.
+ \item Em caso de dúvida, use o Fórum do Estudante. Por favor, não envie suas dúvidas diretamente ao professor.
+\end{enumerate}
+
+\begin{comment}\vspace{2mm}
+\noindent {\bf ATENÇÃO:}\, algumas dentre as questões abaixo podem valer nota e/ou serem incluídas em outras atividades durante o quadrimetre. A nota máxima desta tarefa é 10.0 (dez).
+\end{comment}
+
+\mbox{}
+\vspace{5mm}
+
+A necessidade de se usar métodos numéricos para aproximar raízes de (sistemas) de equações algébricas não lineares aparece em diversos contextos na prática. Nesta tarefa, exploramos como alguns desses métodos são usados no contexto de equações diferenciais ordinárias. 
+O Problema 1 é obrigatório e o Problema 2 é optativo. Mesmo com acúmulo eventual de bônus, a nota máxima desta tarefa é 10.0 (dez), se apenas o Problema 1 for entregue, sendo que ela passa a ser 11.0 (onze) caso também o Problema 2 seja resolvido. Não haverá qualquer normalização posterior da nota --- apenas, claro, um corte caso a média final seja superior a 10.0 (dez).
+
+\section{Método das Aproximações Sucessivas}
+Use o Método de Euler Implícito ou o Método do Trapézio, 
+\[ y_0\doteq y(t_0),\quad t_{k+1}=t_0+(k+1)\Delta t,\quad y_{k+1}=y_k+\frac{\Delta t}{2}\,\Big[f(t_k,y_k)+f(t_{k+1},y_{k+1})\Big], 
+\] 
+$k=0,1,\ldots , n-1$, onde $\Delta t=(T-t_0)/n$,
+em conjunto com o Método das Aproxi\-mações Sucessivas (MAS) para resolver um sistema bidimensional de equações diferenciais ordinárias não linear como, por exemplo, do tipo presa-predador. Se Trapézio, 0.5 ponto de bônus.  
+
+Faz parte deste problema a verificação da correta implementação do algoritmo como um todo (Euler Implícito com MAS ou Trapézio com MAS) via solução manufaturada. São  necessárias as tabelas para estimar ordem de convergência para ambos, para um problema com solução ``suave'' conhecida e para o problema de interesse em análise cuja solução não se conhece. Neste último caso, acrescente uma coluna extra na tabela para a estimativa do erro além da coluna para a estimativa da ordem de convergência. Lembre-se que para isso, devemos usar três aproximações em malhas progressivamente mais finas como explicado no CAP.2 do manuscrito. Use alguma norma vetorial.  Traçados gráficos são necessários apenas na aplicação ao problema de interesse: um sistema de coordenadas para cada variável de estado. SUGESTÃO: adapte o relatório da TAREFA \#01 e use os mesmos sistemas bidimensionais não li\-neares. ATENÇÃO: na seção de ``metodologia numérica'', faça comentários sobre a escolha do passo de integração temporal $\Delta t$ e sua relação com as condições do Teorema do Ponto Fixo nas quais saberemos com certeza, {\it a priori}, da convergência do Método das Aproximações Sucessivas. {\it Será um comentário de cunho teórico o qual não necessariamente impactará a implementação computacional}.
+
+\section{Método de Newton (optativa)}
+Este problema não é obrigatório, mas se resolvido e entregue à parte apenas o programa e os traçados gerados, a nota máxima do relatório passa a ser 11.0 (onze) pontos. Este problema requer o uso de números complexos na implementação computacional do Método de Newton e que o aluno reveja a noção de fator de amplificação e de estabilidade numérica dos métodos de um passo. 
+
+
+Determine o fator de amplificação dos métodos de Runge-Kutta com até 4 estágios que tenham ordem máxima e esboce suas regiões de estabilidade absoluta no plano complexo. Para isto, será necessário aproximar as  raízes complexas de uma equação algébrica. ATENÇÃO: é preciso provocar discussões em sala... 
+
+
+\section{Critério de correção: orientações gerais}
+As orientações a seguir são preliminares e podem ser alteradas à medida que discutirmos em sala de aula e com os monitores a resolução desta tarefa. Inicialmente, teremos a distribuição de pontos:
+
+\begin{enumerate}
+  \item (4.0 pontos) qualidade da estrutura do relatório: capa, tabela de conteúdo, título, autores com afiliação e email institucional, resumo, 1. introdução, 2. "modelagem matemática", 3. metodologia numérica, 4. resultados, em duas partes: 4.1 verificação por solução manufaturada e 4.2 aplicação ao problema de interesse cuja solução não se conhece, 5. conclusão e demais partes relevantes num relatório como, por exemplo, referências bibliográficas, apêndices, etc. Você sabe estruturar um arquivo com extensão ``.bib'' para gerar automaticamente as citações e a seção de referências bi\-bliográficas? Você sabe usar o Google para obter diretamente as entradas  no formato \LaTeX\, adequadas para incluir no ``.bib''?  Ajudem-se uns aos outros via Fórum do Estudante (há alunos fora do grupo de WhatsApp).
+  \item (6.0 pontos) detalhamento da Seção 4, a de resultados: tem que ser super completa e possibilitar a reprodutibilidade dos experimentos numéricos que foram feitos.  Nela,  o esperado é mostrar o problema manufaturado e a tabela de convergência usando uma norma vetorial à escolha --- gráficos não são necessários nesta parte. Na aplicação do método para problema sem solução conhecida, espera-se uma única tabela de convergência (pois deve-se tratar como vetor o problema) e dois sistemas de eixos cartesianos, um para cada var de estado, contendo algumas aproximações numéricas que mostrem a tendência (de forma estética de preferência). 
+  \item haverá descontos de 0.5-1.0 ponto por evento (de forma cumulativa), na ausência de uma ``boa conduta'' gráfica, se houver erros recorrentes de português e de separação silábica, pelo uso de  ``linguagem de vendedor de telemarketing'', por grandiloquência, gerundismo e excesso de informalidade. ``Consulte o {\it Aurélio}''...
+  \item haverá descontos de 1.0 a 3.0 pontos por erros de implementação na metodologia numérica, programas mal comentados ou mal edentados, difíceis de serem compartilhados ou reusados, tabelas de convergência inconclusivas ou confeccionadas de maneira errada.
+  \item haverá descontos de 1.5 a 2.5 pontos caso a seção de metodologia numérica não investigue em que condições há convergência prevista pela teoria.
+\end{enumerate}
+
+
+\section{COMENTÁRIOS FINAIS}
+    Acho importante dar um caráter ``instrumental'' à disciplina. O uso do \LaTeX\quad (e.g. via overleaf.com) e a ``boa conduta'' no traçado de gráficos têm este propósito. Boas apresentações valorizam (e muito) a produção intelectual. Trabalho coletivo saudável melhora a famosa ``dinâmica de grupo''. CAUTELA: sempre é possível acrescentar mais e mais detalhes nos enunciados dos problemas propostos. Embora não pareça à primeira vista, isto pode não ser o melhor a ser feito aqui. NADA substitui uma discussão com a participação de todos, em tempo real, feita em sala de aula.
+    
+\vspace{5mm}
+
+\noindent
+Dúvidas? Use o Fórum do Estudante. 
+ Deixe de ouvir a ``Dona Maria do zap''. Sugestões e críticas? Manifeste-se. Vamos discutir em sala,  presencialmente. 
+\end{document}
+
+
