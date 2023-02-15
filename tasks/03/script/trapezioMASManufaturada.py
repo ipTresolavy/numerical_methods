@@ -19,14 +19,14 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # definições
-NO_DE_CASOS = 5
+NO_DE_CASOS = 10
 INICIO_INTERVALO = 0
-CONDICAO_INICIAL = [10, 5]
-FIM_INTERVALO = 100
-QNTD_PASSOS_INICIAL = 4096
+CONDICAO_INICIAL = [0, 3]
+FIM_INTERVALO = (3.0*np.pi)/4.0
+QNTD_PASSOS_INICIAL = 8
 FATOR_MULTIPLICATIVO = 2
 PASSO_INICIAL = (FIM_INTERVALO - INICIO_INTERVALO)/QNTD_PASSOS_INICIAL
-TOL = 2e-10
+TOL = 2e-8
 MAXIMO_ITERACOES = 3
 
 
@@ -44,6 +44,7 @@ def trapezoidal(t_0, T, h_n, f, w_0):
     for t_k in t[:-1]:
         k_1 = y[-1] + (h_n*f(t_k,y[-1]))/2
         y_j = y[-1] + h_n*f(t_k,y[-1])
+        # y_j = k_1
 
         # Método das aproximações sucessivas
         j = 1
@@ -63,16 +64,17 @@ def trapezoidal(t_0, T, h_n, f, w_0):
 
     return t, y
 
+# Solução exata do Problema de Cauchy 2D
+def y_e(T):
+    return np.array([np.exp(-T) - np.exp(-4*T), -np.exp(-T) + 4*np.exp(-4*T)])
+
 # f(t,y_1, y_2) do problema de Cauchy 2D
 def f(t, y):
-    p = y[0]
-    q = y[1]
-    a = 0.2
-    m = 0.1
-    K = 500
-    k = 0.2
-    b = 0.1
-    return np.array([a*p*(1-p/K) - b*p*q/(1+b*p), m*q*(1-1/(k*p))])
+    return np.array([y[1], -4*y[0] -5*y[1]])
+
+def inverse_jacobian(h_n):
+    return np.array([[5*h_n + 2, h_n],
+                    [-4*h_n    , 2]])/(2*(h_n**2)+5*h_n+2)
 
 def main():
 
@@ -87,10 +89,9 @@ def main():
         h_n = (FIM_INTERVALO - INICIO_INTERVALO)/n
 
         malha__do__tempo, aproximacao__numerica = trapezoidal(INICIO_INTERVALO, FIM_INTERVALO, h_n, f, CONDICAO_INICIAL)
-        proxima__malha__do__tempo, proxima__aproximacao__numerica = trapezoidal(INICIO_INTERVALO, FIM_INTERVALO, h_n/2, f, CONDICAO_INICIAL)
 
         # norma euclidiana do erro de discretização global
-        e = np.linalg.norm(aproximacao__numerica[-1] - proxima__aproximacao__numerica[-1])
+        e = np.linalg.norm(y_e(FIM_INTERVALO) - aproximacao__numerica[-1])
 
         ordem__p = np.log(abs(e__anterior/e))/np.log(FATOR_MULTIPLICATIVO) if caso != 1 else 0
 
@@ -98,19 +99,24 @@ def main():
 
         e__anterior = e
 
-        if caso == 1 or caso == 3 or caso == 8:
+        if caso == 2 or caso == 3 or caso == 8:
             ax1.plot(malha__do__tempo, [y[0] for y in aproximacao__numerica], color="black", linestyle=linestyles[caso%4], label="$\eta_1(t,h)$ para n = {}".format(str(n)))
             ax2.plot(malha__do__tempo, [y[1] for y in aproximacao__numerica], color="black", linestyle=linestyles[caso%4], label="$\eta_2(t,h)$ para n = {}".format(str(n)))
 
+
+
+    ax1.plot(malha__do__tempo, y_e(malha__do__tempo)[0], color="black", linestyle="solid", label="solução exata")
+    ax2.plot(malha__do__tempo, y_e(malha__do__tempo)[1], color="black", linestyle="solid", label="primeira derivada da solução exata")
+
     ax1.set_xlabel("t (adimensional)")
     ax1.set_ylabel("variável de estado (adimensional)")
-    ax1.set_title("Aproximações de $p(t)$ para diversos valores de $n$", size=12)
-    ax1.legend(loc="upper left")
+    ax1.set_title("Método de Euler 2D para a variável de estado $y_1$ \n(solução exata $y_e(t) = e^{-t} - e^{-4t}$)", size=12)
+    ax1.legend(loc="upper right",)
 
     ax2.set_xlabel("t (adimensional)")
     ax2.set_ylabel("variável de estado (adimensional)")
-    ax2.set_title("Aproximações de $q(t)$ para diversos valores de $n$", size=12)
-    ax2.legend(loc="upper left")
+    ax2.set_title("Método de Euler 2D para a variável de estado $y_2$ \n(derivada da solução exata $\dot{y}_e(t) = -e^{-t} + 4e^{-4t}$)", size=12)
+    ax2.legend(loc="upper right")
 
     ax1.set_box_aspect(1/2)
     ax2.set_box_aspect(1/2)
