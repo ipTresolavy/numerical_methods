@@ -1,0 +1,40 @@
+Script para implementação da Tarefa2
+
+Foi entregue 3 arquivos:
+EulerExplicito.py
+EulerAprimorado.py
+EulerImplicito.py
+
+Quando o arquivo EulerExplicito.py for rodado irá aparecer um menu de opções com 6 opções. São elas:
+
+[1] Gráfico de x vs t - para diferentes n
+[2] Gráfico de y vs t - para diferentes n
+[3] Gráfico de x vs t - solução numérica e exata
+[4] Gráfico de y vs t - solução numérica e exata
+[5] Tabela de erro de discretização
+[6] Sair da tarefa
+
+Quando escolhido:
+[1] - aparecerá Figura 1 do relatório
+[2] - Figura 2
+[3] - Figura 3
+[4] - Figura 4
+[5] - Figura 5
+
+Quando o arquivo EulerAprimorado.py for rodado irá aparecer o mesmo menu de opções acima. 
+
+Quando escolhido:
+[1] - Figura 6
+[2] - Figura 7
+[3] - Figura 8
+[4] - Figura 9
+[5] - Figura 10
+
+Quando o arquivo EulerImplicito.py for rodado irá aparecer o mesmo menu de opções acima. 
+
+Quando escolhido:
+[1] - Figura 11
+[2] - Figura 12
+[3] - Figura 13
+[4] - Figura 14
+[5] - Figura 15
