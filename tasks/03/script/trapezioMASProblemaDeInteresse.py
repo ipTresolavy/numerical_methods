@@ -1,39 +1,63 @@
 # autor: Igor Pontes Tresolavy
-# autor: Thiago Antice Rodrigues de Souza
+# autor: Thiago Antici Rodrigues de Souza
 
 """
-Confeccionando tabelas de convergência para os problemas manufaturados:
-y_e_1(t) = e^(-5t)cos(t)
-y_e_2(t) = e^(-t) - e^(-4t)
+Esse programa confecciona tabelas de convergência para o seguinte
+problema de Lotka-Volterra (Lotka-Volterra com características de relacionamento mutual;
+ver https://en.wikipedia.org/wiki/Mutualism_(biology)#Mathematical_modeling):
 
-Problema de Cauchy 1D
-- d[y(t)]/dt = f(t, y) = -5y - e^(-5t)sin(t)
-- y(0) = 1
+dp/dt = a*p(1-p/K) - b*p*q/(1+b*p)
+dq/dt = m*q(1-1/(k*p))
 
-Problema de Cauchy 2D
-d[(y1(t), y2(t))]/dt = ((0, 1), (-4, -5))*(y1(t), y2(t))
-(y1(0), y2(0)) = (0, 3)
+com a = 0.2, m = 0.1, K= 500, k = 0.2, b = 0.1, p(0) = 10,
+q(0) = 5
+
+Há 9 parâmetros nesse programa:
+
+    NO_DE_CASOS: define a quantidade de linhas na tabela da saída.
+                 Ou seja, define quantas malhas progressivamente
+                 mais finas que o programa executa.
+
+    INICIO_INTERVALO: define o início do intervalo o qual se deseja
+                      discretizar a solução da EDO através o Método
+                      do Trapézio Implícito
+
+    CONDICAO_INICIAL: condição inicial do Problema de Cauchy
+
+    FIM_INTERVALO: define o fim do intervalo o qual se deseja
+                   discretizar a solução da EDO através o Método
+                   do Trapézio Implícito
+
+    QNTD_PASSOS_INICIAL: define a primeira quantidade de subintervalos
+                         no intervalo [INICIO_INTERVALO, FIM_INTERVALO]
+
+    FATOR_MULTIPLICATIVO: define em quantas vezes a quantidade de
+                          subintervalos é diminuída a cada caso
+
+    TOL: define a tolerância do erro relativo no critério de para do
+         Método do Ponto Fixo
+
+    MAXIMO_ITERACOES: define a quantidade máxima de iterações do
+                      Método do Ponto Fixo
+
+Adicionalmente, pode-se alterar a função f do Problema de Cauchy a fim
+de se reutilizar o programa para a discretização de outro problema pelo
+Método Trapézio Implícito.
 """
 
 import matplotlib.pyplot as plt
 import numpy as np
 
 # definições
-NO_DE_CASOS = 5
+NO_DE_CASOS = 8
 INICIO_INTERVALO = 0
 CONDICAO_INICIAL = [10, 5]
-FIM_INTERVALO = 100
-QNTD_PASSOS_INICIAL = 4096
+FIM_INTERVALO = 80
+QNTD_PASSOS_INICIAL = 32
 FATOR_MULTIPLICATIVO = 2
 PASSO_INICIAL = (FIM_INTERVALO - INICIO_INTERVALO)/QNTD_PASSOS_INICIAL
-TOL = 2e-10
+TOL = 2e-8
 MAXIMO_ITERACOES = 3
-
-
-# definindo a sequência de passos no tempo e
-# a variável de estado (essas linhas só existem para que seja possível
-# traçãr o gráfico das funções)
-t = np.arange(INICIO_INTERVALO, FIM_INTERVALO + PASSO_INICIAL, PASSO_INICIAL)
 
 # Método do Trapézio Implícito com Iterações de Newton
 def trapezoidal(t_0, T, h_n, f, w_0):
@@ -43,20 +67,19 @@ def trapezoidal(t_0, T, h_n, f, w_0):
 
     for t_k in t[:-1]:
         k_1 = y[-1] + (h_n*f(t_k,y[-1]))/2
-        y_j = y[-1] + h_n*f(t_k,y[-1])
+        y_m = y[-1] + h_n*f(t_k,y[-1])
 
         # Método das aproximações sucessivas
-        j = 1
+        m = 1
         flag = 0
         while flag==0:
-            w = (k_1 + h_n*f(t_k + h_n, y_j)/2)
-            # w = y_j - np.dot(inverse_jacobian(h_n), (y_j - h_n*f(t + h_n, y_j) - k_1))
-            if abs(np.max((w - y_j))/np.max(y_j)) < TOL:
+            w = (k_1 + h_n*f(t_k + h_n, y_m)/2)
+            if abs(np.linalg.norm((w - y_m))/np.linalg.norm(y_m)) < TOL:
                 flag = 1
             else:
-                j = j + 1
-                y_j = w
-                if j > MAXIMO_ITERACOES:
+                m = m + 1
+                y_m = w
+                if m > MAXIMO_ITERACOES:
                    break
 
         y.append(w)
@@ -73,6 +96,7 @@ def f(t, y):
     k = 0.2
     b = 0.1
     return np.array([a*p*(1-p/K) - b*p*q/(1+b*p), m*q*(1-1/(k*p))])
+
 
 def main():
 
@@ -98,9 +122,9 @@ def main():
 
         e__anterior = e
 
-        if caso == 1 or caso == 3 or caso == 8:
-            ax1.plot(malha__do__tempo, [y[0] for y in aproximacao__numerica], color="black", linestyle=linestyles[caso%4], label="$\eta_1(t,h)$ para n = {}".format(str(n)))
-            ax2.plot(malha__do__tempo, [y[1] for y in aproximacao__numerica], color="black", linestyle=linestyles[caso%4], label="$\eta_2(t,h)$ para n = {}".format(str(n)))
+        if caso == 1 or caso == 2 or caso == 3 or caso == 8:
+            ax1.plot(malha__do__tempo, [y[0] for y in aproximacao__numerica], color="black", linestyle=linestyles[caso%4], label="$n = {}".format(str(n)))
+            ax2.plot(malha__do__tempo, [y[1] for y in aproximacao__numerica], color="black", linestyle=linestyles[caso%4], label="$n = {}".format(str(n)))
 
     ax1.set_xlabel("t (adimensional)")
     ax1.set_ylabel("variável de estado (adimensional)")

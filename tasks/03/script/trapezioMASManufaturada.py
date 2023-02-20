@@ -1,24 +1,25 @@
 # autor: Igor Pontes Tresolavy
-# autor: Thiago Antice Rodrigues de Souza
+# autor: Thiago Antici Rodrigues de Souza
 
 """
-Confeccionando tabelas de convergência para os problemas manufaturados:
-y_e_1(t) = e^(-5t)cos(t)
-y_e_2(t) = e^(-t) - e^(-4t)
-
-Problema de Cauchy 1D
-- d[y(t)]/dt = f(t, y) = -5y - e^(-5t)sin(t)
-- y(0) = 1
+Confeccionando tabelas de convergência para o problema manufaturado:
+y_e(t) = e^(-t) - e^(-4t)
 
 Problema de Cauchy 2D
 d[(y1(t), y2(t))]/dt = ((0, 1), (-4, -5))*(y1(t), y2(t))
 (y1(0), y2(0)) = (0, 3)
+
+Há 9 parâmetros nesse programa:
+    NO_DE_CASOS: define a quantidade de linhas na tabela da saída. Ou seja, define quantas malhas progressivamente mais finas que o programa executa.
+    INICIO_INTERVALO: define o início do intervalo o qual se deseja discretizar através o Método do Trapézio Implícito
+
+Adicionalmente, pode-se alterar a função f do Problema de Cauchy e a solução conhecida a fim de reutilizar o programa para a discretização de outro problema
 """
 
 import matplotlib.pyplot as plt
 import numpy as np
 
-# definições
+# parâmetros
 NO_DE_CASOS = 10
 INICIO_INTERVALO = 0
 CONDICAO_INICIAL = [0, 3]
@@ -29,11 +30,13 @@ PASSO_INICIAL = (FIM_INTERVALO - INICIO_INTERVALO)/QNTD_PASSOS_INICIAL
 TOL = 2e-8
 MAXIMO_ITERACOES = 3
 
+# Solução exata do Problema de Cauchy 2D
+def y_e(T):
+    return np.array([np.exp(-T) - np.exp(-4*T), -np.exp(-T) + 4*np.exp(-4*T)])
 
-# definindo a sequência de passos no tempo e
-# a variável de estado (essas linhas só existem para que seja possível
-# traçãr o gráfico das funções)
-t = np.arange(INICIO_INTERVALO, FIM_INTERVALO + PASSO_INICIAL, PASSO_INICIAL)
+# f(t,y_1, y_2) do problema de Cauchy 2D
+def f(t, y):
+    return np.array([y[1], -4*y[0] -5*y[1]])
 
 # Método do Trapézio Implícito com Iterações de Newton
 def trapezoidal(t_0, T, h_n, f, w_0):
@@ -43,15 +46,14 @@ def trapezoidal(t_0, T, h_n, f, w_0):
 
     for t_k in t[:-1]:
         k_1 = y[-1] + (h_n*f(t_k,y[-1]))/2
+        # o chute inicial é resultado da aplicação do Método de Euler
         y_j = y[-1] + h_n*f(t_k,y[-1])
-        # y_j = k_1
 
         # Método das aproximações sucessivas
         j = 1
         flag = 0
         while flag==0:
             w = (k_1 + h_n*f(t_k + h_n, y_j)/2)
-            # w = y_j - np.dot(inverse_jacobian(h_n), (y_j - h_n*f(t + h_n, y_j) - k_1))
             if abs(np.max((w - y_j))/np.max(y_j)) < TOL:
                 flag = 1
             else:
@@ -63,18 +65,6 @@ def trapezoidal(t_0, T, h_n, f, w_0):
         y.append(w)
 
     return t, y
-
-# Solução exata do Problema de Cauchy 2D
-def y_e(T):
-    return np.array([np.exp(-T) - np.exp(-4*T), -np.exp(-T) + 4*np.exp(-4*T)])
-
-# f(t,y_1, y_2) do problema de Cauchy 2D
-def f(t, y):
-    return np.array([y[1], -4*y[0] -5*y[1]])
-
-def inverse_jacobian(h_n):
-    return np.array([[5*h_n + 2, h_n],
-                    [-4*h_n    , 2]])/(2*(h_n**2)+5*h_n+2)
 
 def main():
 
