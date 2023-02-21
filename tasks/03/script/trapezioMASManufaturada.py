@@ -42,6 +42,8 @@ def f(t, y):
 def trapezoidal(t_0, T, h_n, f, w_0):
 
     t = np.arange(t_0, T + h_n, h_n)
+
+    # condição inicial
     y = [np.array(w_0)]
 
     for t_k in t[:-1]:
@@ -68,27 +70,34 @@ def trapezoidal(t_0, T, h_n, f, w_0):
 
 def main():
 
+    # Gráficos para as variáveis de estado
     fig, (ax1, ax2) = plt.subplots(2, figsize=(7,10))
     fig.tight_layout()
     linestyles = ["dotted", "dashed", "dashdot", (0, (10, 3))]
 
-    print("TABELA DE VERIFICAÇÃO DE SOLUÇÃO MANUFATURADA (1D e 2D)");
+    print("TABELA DE VERIFICAÇÃO DE SOLUÇÃO MANUFATURADA");
 
     for caso in range(1, NO_DE_CASOS + 1):
+        # quantidade de subdivisões no intervalos
         n = QNTD_PASSOS_INICIAL*(FATOR_MULTIPLICATIVO**(caso-1))
+
+        # tamanho do passo de integração
         h_n = (FIM_INTERVALO - INICIO_INTERVALO)/n
 
+        # aproximação da solução no intervalo e pontos de malha do tempo
         malha__do__tempo, aproximacao__numerica = trapezoidal(INICIO_INTERVALO, FIM_INTERVALO, h_n, f, CONDICAO_INICIAL)
 
         # norma euclidiana do erro de discretização global
         e = np.linalg.norm(y_e(FIM_INTERVALO) - aproximacao__numerica[-1])
 
+        # aproximação da ordem do método
         ordem__p = np.log(abs(e__anterior/e))/np.log(FATOR_MULTIPLICATIVO) if caso != 1 else 0
 
         print("%s %5d %s & %s %9.3e %s & %s %9.3e %s & %s %9.3e %s  \\\\" % ("$", n, "$", "$", h_n, "$", "$",e, "$", "$",ordem__p, "$"));
 
         e__anterior = e
 
+        # traçado de gráficos para determinados casos
         if caso == 2 or caso == 3 or caso == 8:
             ax1.plot(malha__do__tempo, [y[0] for y in aproximacao__numerica], color="black", linestyle=linestyles[caso%4], label="$\eta_1(t,h)$ para n = {}".format(str(n)))
             ax2.plot(malha__do__tempo, [y[1] for y in aproximacao__numerica], color="black", linestyle=linestyles[caso%4], label="$\eta_2(t,h)$ para n = {}".format(str(n)))

@@ -63,10 +63,13 @@ MAXIMO_ITERACOES = 3
 def trapezoidal(t_0, T, h_n, f, w_0):
 
     t = np.arange(t_0, T + h_n, h_n)
+
+    # condição inicial
     y = [np.array(w_0)]
 
     for t_k in t[:-1]:
         k_1 = y[-1] + (h_n*f(t_k,y[-1]))/2
+        # o chute inicial é resultado da aplicação do Método de Euler
         y_m = y[-1] + h_n*f(t_k,y[-1])
 
         # Método das aproximações sucessivas
@@ -100,6 +103,7 @@ def f(t, y):
 
 def main():
 
+    # Gráficos para as variáveis de estado
     fig, (ax1, ax2) = plt.subplots(2, figsize=(7,10))
     fig.tight_layout()
     linestyles = ["dotted", "dashed", "dashdot", (0, (10, 3))]
@@ -107,21 +111,27 @@ def main():
     print("TABELA DE VERIFICAÇÃO DE SOLUÇÃO MANUFATURADA (1D e 2D)");
 
     for caso in range(1, NO_DE_CASOS + 1):
+        # quantidade de subdivisões no intervalos
         n = QNTD_PASSOS_INICIAL*(FATOR_MULTIPLICATIVO**(caso-1))
+
+        # tamanho do passo de integração
         h_n = (FIM_INTERVALO - INICIO_INTERVALO)/n
 
+        # aproximações da solução no intervalo e pontos de malha do tempo
         malha__do__tempo, aproximacao__numerica = trapezoidal(INICIO_INTERVALO, FIM_INTERVALO, h_n, f, CONDICAO_INICIAL)
         proxima__malha__do__tempo, proxima__aproximacao__numerica = trapezoidal(INICIO_INTERVALO, FIM_INTERVALO, h_n/2, f, CONDICAO_INICIAL)
 
         # norma euclidiana do erro de discretização global
         e = np.linalg.norm(aproximacao__numerica[-1] - proxima__aproximacao__numerica[-1])
 
+        # aproximação da ordem do método
         ordem__p = np.log(abs(e__anterior/e))/np.log(FATOR_MULTIPLICATIVO) if caso != 1 else 0
 
         print("%s %5d %s & %s %9.3e %s & %s %9.3e %s & %s %9.3e %s  \\\\" % ("$", n, "$", "$", h_n, "$", "$",e, "$", "$",ordem__p, "$"));
 
         e__anterior = e
 
+        # traçado de gráficos para determinados casos
         if caso == 1 or caso == 2 or caso == 3 or caso == 8:
             ax1.plot(malha__do__tempo, [y[0] for y in aproximacao__numerica], color="black", linestyle=linestyles[caso%4], label="$n = {}".format(str(n)))
             ax2.plot(malha__do__tempo, [y[1] for y in aproximacao__numerica], color="black", linestyle=linestyles[caso%4], label="$n = {}".format(str(n)))
