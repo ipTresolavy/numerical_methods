@@ -34,11 +34,7 @@ def regiaoDeEstabilidade(fatorDeAmplificacao):
 
             lambda_h = -0.5 - 0.5j # chute inicial
 
-            # valor do fator de amplificação menos
-            # o círculo unitário calculado em
-            # lambda_h = 0 + 0j
-            raiz_lambda_h = np.exp(1j*teta) - 1
-
+            # Método de Newton
             i = 0
             while i < MAX:
                 raiz_lambda_h = lambda_h - (psi(lambda_h) - np.exp(1j*teta))/(psi.deriv()(lambda_h))
