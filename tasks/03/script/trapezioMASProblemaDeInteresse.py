@@ -122,7 +122,7 @@ def main():
         proxima__malha__do__tempo, proxima__aproximacao__numerica = trapezoidal(INICIO_INTERVALO, FIM_INTERVALO, h_n/2, f, CONDICAO_INICIAL)
 
         # norma euclidiana do erro de discretização global
-        e = np.linalg.norm(aproximacao__numerica[-1] - proxima__aproximacao__numerica[-1])
+        e = np.linalg.norm(aproximacao__numerica[-1] - proxima__aproximacao__numerica[-1])/(2**2 - 1)
 
         # aproximação da ordem do método
         ordem__p = np.log(abs(e__anterior/e))/np.log(FATOR_MULTIPLICATIVO) if caso != 1 else 0
