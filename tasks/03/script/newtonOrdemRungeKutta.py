@@ -46,7 +46,7 @@ def regiaoDeEstabilidade(fatorDeAmplificacao):
 
             # diminui grau do polinômio
             psi = psi//(P([-1*raiz_lambda_h, 1])) + \
-                psi % (P([-1*raiz_lambda_h, 1]))
+                psi % (P([-1*raiz_lambda_h, 1])) # quociente e resto
 
         teta = teta + INCREMENTO
 
@@ -73,8 +73,8 @@ def main():
     regiaoRK33 = regiaoDeEstabilidade(RK33)
     regiaoRK44 = regiaoDeEstabilidade(RK44)
 
-    # Realizamos a ordenacao do plano para que
-    # eles as linhas sejam displayed corretamente
+    # ordenando pontos para que
+    # a correta visualização no gráfico
     ordenarPontos(regiaoRK11)
     ordenarPontos(regiaoRK22)
     ordenarPontos(regiaoRK33)
@@ -85,9 +85,9 @@ def main():
     ax.plot([z.real for z in regiaoRK22], [z.imag for z in regiaoRK22],
             color="black", linestyle="dashed", label="RK22")
     ax.plot([z.real for z in regiaoRK33], [z.imag for z in regiaoRK33],
-            color="black", linestyle="solid", label="RK33")
+            color="black", linestyle="dashdot", label="RK33")
     ax.plot([z.real for z in regiaoRK44], [z.imag for z in regiaoRK44],
-            color="black", linestyle=(0, (3, 5, 1, 5)), label="RK44")
+            color="black", linestyle=(0, (3, 1, 1, 1, 1, 1)), label="RK44")
     ax.set_xlabel("$Re(\lambda h)$")
     ax.set_ylabel("$Im(\lambda h)$")
     ax.set_title("Regiões de Estabilidade para Métodos Runge-Kutta")
@@ -104,7 +104,7 @@ def transladar_1_positivo(regiao):
         novo = np.add(regiao[i], 1)
         regiao[i] = novo
 
-# Funcao responsavel por transaldar em 1 unidade para o offset do plano
+# Funcao responsavel por transaldar em 1 unidade para o (-1,0)
 
 
 def transladar_1_negativo(regiao):
@@ -118,7 +118,7 @@ def transladar_1_negativo(regiao):
 def ordenarPontos(regiao):
     transladar_1_positivo(regiao)
     regiao.sort(key=np.angle)
-    first_point = regiao[0]
+    first_point = regiao[0] # usado para fechar a curva nos pontos iniciais e finais
     regiao.append(first_point)
     transladar_1_negativo(regiao)
 
