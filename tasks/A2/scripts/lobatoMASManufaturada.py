@@ -50,11 +50,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # parâmetros
-NO_DE_CASOS = 16
+NO_DE_CASOS = 10
 INICIO_INTERVALO = 0
 CONDICAO_INICIAL = [1, 0]
 FIM_INTERVALO = 100
-QNTD_PASSOS_INICIAL = 8
+QNTD_PASSOS_INICIAL = 4
 FATOR_MULTIPLICATIVO = 2
 PASSO_INICIAL = (FIM_INTERVALO - INICIO_INTERVALO)/QNTD_PASSOS_INICIAL
 TOL = 2e-8
@@ -80,8 +80,8 @@ def _lobatoIIIC_ordem2(t_0, T, h_n, f, y_0):
     for t_k in t[:-1]:
         # o chute inicial dos coeficientes é resultado
         # da aplicação método de Euler Modificado
-        k_1 = f(t_k    , y[-1])
-        k_2 = f(t + h_n, y[-1] + h_n*k_1)
+        k_1 = f(t_k      , y[-1])
+        k_2 = f(t_k + h_n, y[-1] + h_n*k_1)
 
         # Método das aproximações sucessivas
         j     = 1
@@ -118,9 +118,9 @@ def _lobatoIIIC_ordem4(t_0, T, h_n, f, y_0):
     for t_k in t[:-1]:
         # o chute inicial dos coeficientes é resultado
         # da aplicação do Runge-Kutta de ordem 3 (RK33)
-        k_1 = f(t_k      , y[-1])
-        k_2 = f(t + h_n/2, y[-1] + h_n*k_1/2)
-        k_3 = f(t + h_n  , y[-1] + h_n*(-k_1 + 2*k_2))
+        k_1 = f(t_k        , y[-1])
+        k_2 = f(t_k + h_n/2, y[-1] + h_n*k_1/2)
+        k_3 = f(t_k + h_n  , y[-1] + h_n*(-k_1 + 2*k_2))
 
         # Método das aproximações sucessivas
         j     = 1
