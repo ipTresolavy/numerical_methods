@@ -9,12 +9,14 @@ DEBUG = 0
 # parâmetros
 MAX_B = 200
 MAX_V = MAX_B/159*24.8
-NO_DE_PASSOS = 2
+NO_DE_PASSOS = 4
 PARAMETROS_INICIAIS = np.array([0.005,0.0005,0.0005,-0.00005,0.0000005,0.00003,0.000038,0.000007,0.000005,0.0000005,0.0000005])
 INICIO_INTERVALO = 80
 CONDICAO_INICIAL = [159, 24.8]
 FIM_INTERVALO = 97
-QNTD_PASSOS_MMQ = 17
+MULTIPLICADOR = 2**10
+QNTD_DE_DADOS = 18
+QNTD_PASSOS_MMQ = (QNTD_DE_DADOS-1)*MULTIPLICADOR
 PASSO_DE_INTEG_MMQ = (FIM_INTERVALO - INICIO_INTERVALO)/QNTD_PASSOS_MMQ
 PERTURBACAO = 2e-4
 TOL_MMQ = 2e-8
@@ -24,7 +26,7 @@ MAXIMO_ITERACOES = 3
 # Dados obtidos do problema
 def dados(T):
     data = np.genfromtxt('dados.csv', delimiter=',') 
-    return np.array([data[int(T)-80][0], data[int(T)-80][1]])
+    return np.array([data[T][0], data[T][1]])
 
 # f(t,y_1, y_2) do problema de Cauchy 2D
 def f_parametros(param):
@@ -168,9 +170,9 @@ def main(param_inic):
 
     file = open("parametros.txt", "a")
     # inicialização do algoritmo de aproximação de parâmetros de EDOs pelo método de Gauss-Newton
-    malha__do__tempo = np.arange(INICIO_INTERVALO, FIM_INTERVALO + PASSO_DE_INTEG_MMQ, PASSO_DE_INTEG_MMQ)
+    malha__do__tempo = np.arange(INICIO_INTERVALO, FIM_INTERVALO + PASSO_DE_INTEG_MMQ, PASSO_DE_INTEG_MMQ)[0::MULTIPLICADOR]
     data = []
-    for t in malha__do__tempo:
+    for t in range(QNTD_DE_DADOS):
        data.append(dados(t)) 
     
     if DEBUG:
@@ -188,11 +190,11 @@ def main(param_inic):
             print("aproximacao: " + str(aproximacao__numerica))
 
         # TODO: check if this vector doesn't need to be transposed
-        residuo = (np.array(data[1:]) - np.array(aproximacao__numerica[1:]))
+        residuo = (np.array(data[1:]) - np.array(aproximacao__numerica[MULTIPLICADOR::MULTIPLICADOR]))
         if DEBUG:
             print("residuo: " + str(residuo))
 
-        matriz_jacobiana = np.zeros((QNTD_PASSOS_MMQ, len(parametros), np.array([CONDICAO_INICIAL]).ndim))
+        matriz_jacobiana = np.zeros((QNTD_DE_DADOS-1, len(parametros), np.array([CONDICAO_INICIAL]).ndim))
         for j in range(0, len(parametros)):
             perturbacao = np.zeros(len(parametros))
             perturbacao[j] = PERTURBACAO
@@ -202,7 +204,7 @@ def main(param_inic):
             if DEBUG:
                 print("tmp_aproximacao: " + str(tmp_aprox_num))
             # print(str(np.array(tmp_aprox_num).shape) + ", " + str(np.array(aproximacao__numerica).shape))
-            matriz_jacobiana[:,j] = (np.array(tmp_aprox_num[1:]) - np.array(aproximacao__numerica[1:]))/PERTURBACAO
+            matriz_jacobiana[:,j] = (np.array(tmp_aprox_num[MULTIPLICADOR::MULTIPLICADOR]) - np.array(aproximacao__numerica[MULTIPLICADOR::MULTIPLICADOR]))/PERTURBACAO
             if DEBUG:
                 print("matriz_jacob: " + str(matriz_jacobiana))
                 print("shape matriz_jacob: " + str(matriz_jacobiana.shape))

@@ -115,18 +115,6 @@ def lobatoIIIC(t_0, T, h_n, f, y_0, ordem):
     else:
         return _lobatoIIIC_ordem4(t_0, T, h_n, f, y_0)
 
-def euler(t_0, T, h_n, f, y_0, ordem):
-    t = np.arange(t_0, T + h_n, h_n)
-
-    # condição inicial
-    y = [np.array(y_0)]
-
-    for t_k in t[:-1]:
-        y.append(y[-1] + h_n*f(t_k, y[-1]))
-
-    return t, y
-
-
 
 
 def funcao_de_custo(A, B):
