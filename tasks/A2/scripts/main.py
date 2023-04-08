@@ -15,8 +15,8 @@ def verificacaoPorSolucaoManufaturada():
     dados = obterDados(y_e)
 
     # perturba parâmetros para usá-los como estimativa inicial do método
-    param = perturbarParametros(y_e)
-    # param = [-0.74953997, -0.20741463,  1.57840702, -1.10503712]
+    # param = perturbarParametros(y_e)
+    param = [-1.16266218, -0.15810197, 8.70269332, -0.40795276]
     modelo = Y(param)
 
     print("\nEstimativa inicial dos parâmetros: " + str(param))
@@ -100,7 +100,7 @@ def modeloDeMarketplace():
                             0.2,    # beta_V
                             0.00001 # k
                         ]
-    modelo_e = Marketplace(parametrosIniciais, precoLogistico, publicidadeLinear)
+    modelo_e = Marketplace(parametrosIniciais, precoExponencial, publicidadeLinear)
 
     print("Parâmetros reais: " + str(modelo_e.parametros())) 
 
@@ -110,18 +110,13 @@ def modeloDeMarketplace():
     dados = modelo_e(t_0=0, h=t_f/n, t_f=t_f, y_0=[0,0])
    
     # perturba parâmetros para usá-los como estimativa inicial do método
-    param = perturbarParametros(modelo_e,porcentagem=0.05)
-    param2 = perturbarParametros(modelo_e,porcentagem=0.01)
-    param[3] = param2[3] 
-    param[4] = param2[4] 
-    param[8] = param2[8] 
-    param[9] = param2[9] 
-    modelo = Marketplace(param, precoLogistico, publicidadeLinear)
+    param = perturbarParametros(modelo_e,porcentagem=0.03)
+    modelo = Marketplace(param, precoExponencial, publicidadeLinear)
     
     print("Estimativa inicial dos parâmetros: " + str(param))
    
     # aplica Gauss-Newton
-    param = gaussNewton(dados, modelo, t_0=0, h=t_f/n, t_f=t_f, y_0=[0,0], perturbacao=2**-12)
+    param = gaussNewton(dados, modelo, t_0=0, h=t_f/n, t_f=t_f, y_0=[0,0], perturbacao=1e-12)
     modelo.setParametros(param)
     
     print("Resultado de GaussNewton: " + str(param))
@@ -129,7 +124,7 @@ def modeloDeMarketplace():
     print("Tabela de Convergência para o Método de Lobato IIIC:\n")
 
     verificarMarketplace(modelo_e, t_0=0, t_f=t_f, y_0=[0,0])
-    modelo_e = Marketplace(parametrosIniciais, precoExponencial, publicidadeLinear)
+    modelo_e = Marketplace(parametrosIniciais, precoLogistico, publicidadeLinear)
     verificarMarketplace(modelo_e, t_0=0, t_f=t_f, y_0=[0,0])
 
 # Modelo utilizado para cálculo dos parâmetros e discretização do modelo

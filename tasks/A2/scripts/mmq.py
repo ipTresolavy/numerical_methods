@@ -31,7 +31,7 @@ def multMatrixVetor(A, B):
     return C
 
 
-def gaussNewton(dados, m, N=NO_DE_PASSOS, t_0=INICIO_INTERVALO, h=PASSO_DE_INTEG_MMQ , t_f=FIM_INTERVALO, y_0=CONDICAO_INICIAL, perturbacao=DP):
+def gaussNewton(dados, m, N=NO_DE_PASSOS, t_0=INICIO_INTERVALO, h=PASSO_DE_INTEG_MMQ , t_f=FIM_INTERVALO, y_0=CONDICAO_INICIAL, perturbacao=DP, step=1):
 
     modelo = m.copy()
 
@@ -73,23 +73,24 @@ def gaussNewton(dados, m, N=NO_DE_PASSOS, t_0=INICIO_INTERVALO, h=PASSO_DE_INTEG
                 print("matriz_jacob: " + str(matrizJacobiana))
                 print("shape matriz_jacob: " + str(matrizJacobiana.shape))
 
-        p_k = multMatrixVetor(\
-                multMatrixVetor(\
-                    np.linalg.inv(\
-                        multMatrixVetor(\
-                            np.transpose(\
-                                matrizJacobiana,axes=(1,0,2)\
-                            ),\
-                            matrizJacobiana\
-                        )\
-                    ),\
-                    np.transpose(\
-                        matrizJacobiana,\
-                        axes=(1,0,2)\
-                    )\
-                ),\
-                residuo\
-            )
+        # p_k = multMatrixVetor(\
+        #         multMatrixVetor(\
+        #             np.linalg.inv(\
+        #                 multMatrixVetor(\
+        #                     np.transpose(\
+        #                         matrizJacobiana,axes=(1,0,2)\
+        #                     ),\
+        #                     matrizJacobiana\
+        #                 )\
+        #             ),\
+        #             np.transpose(\
+        #                 matrizJacobiana,\
+        #                 axes=(1,0,2)\
+        #             )\
+        #         ),\
+        #         residuo\
+        #     )
+        p_k = np.linalg.solve(multMatrixVetor(np.transpose(matrizJacobiana,axes=(1,0,2)),matrizJacobiana),multMatrixVetor(np.transpose(matrizJacobiana,axes=(1,0,2)),residuo))
 
         # atualiza parâmetros do modelo
         modelo.setParametros(modelo.parametros() + p_k)

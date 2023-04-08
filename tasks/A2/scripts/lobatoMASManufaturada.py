@@ -48,9 +48,10 @@ de outro problema
 
 import matplotlib.pyplot as plt
 import numpy as np
+from lobato import lobatoIIIC
 
 # parâmetros
-NO_DE_CASOS = 10
+NO_DE_CASOS = 15
 INICIO_INTERVALO = 0
 CONDICAO_INICIAL = [1, 0]
 FIM_INTERVALO = 100
@@ -67,94 +68,6 @@ def y_e(T):
 # f(t,y_1, y_2) do problema de Cauchy 2D
 def f(t, y):
     return np.array([-1*y[0] -y[1]/6, 6*y[0] -1*y[1]])
-
-# Método LobatoIIIC de segunda ordem
-# com Método das Aproximações Sucessivas
-def _lobatoIIIC_ordem2(t_0, T, h_n, f, y_0):
-
-    t = np.arange(t_0, T + h_n, h_n)
-
-    # condição inicial
-    y = [np.array(y_0)]
-
-    for t_k in t[:-1]:
-        # o chute inicial dos coeficientes é resultado
-        # da aplicação método de Euler Modificado
-        k_1 = f(t_k      , y[-1])
-        k_2 = f(t_k + h_n, y[-1] + h_n*k_1)
-
-        # Método das aproximações sucessivas
-        j     = 1
-        k_1_j = k_1
-        k_2_j = k_2
-        flag  = 0
-        while flag == 0:
-
-            k_1 = f(t_k      , y[-1] + h_n*(k_1_j - k_2_j)/2)
-            k_2 = f(t_k + h_n, y[-1] + h_n*(k_1_j + k_2_j)/2)
-
-            if max(abs(np.linalg.norm((k_1_j - k_1))/np.linalg.norm(k_1)), abs(np.linalg.norm((k_2_j - k_2))/np.linalg.norm(k_2))) < TOL:
-                flag = 1
-            else:
-                j     = j + 1
-                k_1_j = k_1
-                k_2_j = k_2
-                if j > MAXIMO_ITERACOES:
-                   break
-
-        y.append(y[-1] + h_n*((1/2)*k_1 + (1/2)*k_2))
-
-    return t, y
-
-# Método LobatoIIIC de quarta ordem
-# com Método das Aproximações Sucessivas
-def _lobatoIIIC_ordem4(t_0, T, h_n, f, y_0):
-
-    t = np.arange(t_0, T + h_n, h_n)
-
-    # condição inicial
-    y = [np.array(y_0)]
-
-    for t_k in t[:-1]:
-        # o chute inicial dos coeficientes é resultado
-        # da aplicação do Runge-Kutta de ordem 3 (RK33)
-        k_1 = f(t_k        , y[-1])
-        k_2 = f(t_k + h_n/2, y[-1] + h_n*k_1/2)
-        k_3 = f(t_k + h_n  , y[-1] + h_n*(-k_1 + 2*k_2))
-
-        # Método das aproximações sucessivas
-        j     = 1
-        k_1_j = k_1
-        k_2_j = k_2
-        k_3_j = k_3
-        flag  = 0
-        while flag == 0:
-
-            k_1 = f(t_k        , y[-1] + h_n*(k_1_j/6 -   k_2_j/3  + k_3_j/6))
-            k_2 = f(t_k + h_n/2, y[-1] + h_n*(k_1_j/6 + 5*k_2_j/12 - k_3_j/12))
-            k_3 = f(t_k + h_n  , y[-1] + h_n*(k_1_j/6 + 2*k_2_j/3  + k_3_j/6))
-
-            if max(abs(np.linalg.norm((k_1_j - k_1))/np.linalg.norm(k_1)),
-                   abs(np.linalg.norm((k_2_j - k_2))/np.linalg.norm(k_2)),
-                   abs(np.linalg.norm((k_3_j - k_3))/np.linalg.norm(k_3))) < TOL:
-                flag = 1
-            else:
-                j     = j + 1
-                k_1_j = k_1
-                k_2_j = k_2
-                k_3_j = k_3
-                if j > MAXIMO_ITERACOES:
-                   break
-
-        y.append(y[-1] + h_n*((1/6)*k_1 + (2/3)*k_2 + (1/6)*k_3))
-
-    return t, y
-
-def lobatoIIIC(t_0, T, h_n, f, y_0, ordem):
-    if(ordem == 2):
-        return _lobatoIIIC_ordem2(t_0, T, h_n, f, y_0)
-    else:
-        return _lobatoIIIC_ordem4(t_0, T, h_n, f, y_0)
 
 def main():
 
