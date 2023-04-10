@@ -47,13 +47,13 @@ def gaussNewton(dados, m, N=NO_DE_PASSOS, t_0=INICIO_INTERVALO, h=PASSO_DE_INTEG
         if DEBUG:
             print("aproximacao: " + str(aproximacaoNumerica))
 
-        residuo = (np.array(dados[1:]) - np.array(aproximacaoNumerica[1:]))
+        residuo = (np.array(dados[1:]) - np.array(aproximacaoNumerica[step::step]))
 
         if DEBUG:
             print("residuo: " + str(residuo))
 
         # define dimensões da matriz jacobiana
-        matrizJacobiana = np.zeros((len(aproximacaoNumerica)-1, len(modelo.parametros()), np.array([aproximacaoNumerica[0]]).ndim))
+        matrizJacobiana = np.zeros((len(dados)-1, len(modelo.parametros()), np.array([dados[0]]).ndim))
 
         for j in range(0, len(modelo.parametros())):
             dp = np.zeros(len(modelo.parametros()))
@@ -67,12 +67,13 @@ def gaussNewton(dados, m, N=NO_DE_PASSOS, t_0=INICIO_INTERVALO, h=PASSO_DE_INTEG
             if DEBUG:
                 print("Aproximacao perturbada: " + str(tmpAproxNum))
 
-            matrizJacobiana[:,j] = (np.array(tmpAproxNum[1:]) - np.array(aproximacaoNumerica[1:]))/perturbacao
+            matrizJacobiana[:,j] = (np.array(tmpAproxNum[step::step]) - np.array(aproximacaoNumerica[step::step]))/perturbacao
 
             if DEBUG:
                 print("matriz_jacob: " + str(matrizJacobiana))
                 print("shape matriz_jacob: " + str(matrizJacobiana.shape))
 
+        p_k = np.linalg.solve(multMatrixVetor(np.transpose(matrizJacobiana,axes=(1,0,2)),matrizJacobiana),multMatrixVetor(np.transpose(matrizJacobiana,axes=(1,0,2)),residuo))
         # p_k = multMatrixVetor(\
         #         multMatrixVetor(\
         #             np.linalg.inv(\
@@ -90,7 +91,6 @@ def gaussNewton(dados, m, N=NO_DE_PASSOS, t_0=INICIO_INTERVALO, h=PASSO_DE_INTEG
         #         ),\
         #         residuo\
         #     )
-        p_k = np.linalg.solve(multMatrixVetor(np.transpose(matrizJacobiana,axes=(1,0,2)),matrizJacobiana),multMatrixVetor(np.transpose(matrizJacobiana,axes=(1,0,2)),residuo))
 
         # atualiza parâmetros do modelo
         modelo.setParametros(modelo.parametros() + p_k)

@@ -119,6 +119,7 @@ def main():
 
         # norma euclidiana do erro de discretização global
         e = np.linalg.norm(y_e(FIM_INTERVALO) - aproximacao__numerica[-1])
+        print(e)
 
         # aproximação da ordem do método
         ordem__p = np.log(abs(e__anterior/e))/np.log(FATOR_MULTIPLICATIVO) if caso != 1 else 0

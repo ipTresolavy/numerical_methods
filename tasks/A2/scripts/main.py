@@ -1,5 +1,5 @@
 import numpy as np
-from lobato import lobatoIIIC, verificarModeloComSolucaoConhecida, verificarMarketplace
+from lobatto import lobattoIIIC, verificarModeloComSolucaoConhecida, verificarMarketplace
 from mmq import gaussNewton
 from utils import *
 from inputs import *
@@ -14,6 +14,16 @@ def verificacaoPorSolucaoManufaturada():
     # inicialização do algoritmo de aproximação de parâmetros de EDOs pelo método de Gauss-Newton
     dados = obterDados(y_e)
 
+    print("\nt & ", end='')
+    print("$ y_1(t,\\boldsymbol{x}) $ & ", end='')
+    print("$ y_2(t,\\boldsymbol{x}) $ \\\\\a")
+    for t in range(len(dados[0::100])):
+        print("%s %4d   %s & " % ("$", 100*t, "$"), end='')
+        print("%s %9.3e %s & " % ("$", dados[100*t][0], "$"), end='')
+        print("%s %9.3e %s \\\\" % ("$", dados[100*t][1], "$"))
+
+
+
     # perturba parâmetros para usá-los como estimativa inicial do método
     # param = perturbarParametros(y_e)
     param = [-1.16266218, -0.15810197, 8.70269332, -0.40795276]
@@ -25,9 +35,9 @@ def verificacaoPorSolucaoManufaturada():
     param = gaussNewton(dados, modelo)
     modelo.setParametros(param)
 
-    print("\nResultado de GaussNewton:\n\t" + str(param))
+    print("\nResultado de GaussNewton:\t" + str(param) + "\n")
 
-    print("Tabela de Convergência para o Método de Lobato IIIC:\n")
+    print("Tabela de Convergência para o Método de Lobatto IIIC:")
 
     verificarModeloComSolucaoConhecida(y_e, modelo)
 
@@ -62,7 +72,7 @@ class Y():
             param = self.__parametros
         return lambda t, y : np.array([param[0]*y[0] + param[1]*y[1], param[2]*y[0] +param[3]*y[1]])
 
-    def __call__(self, metodoNumerico=lobatoIIIC, t_0=INICIO_INTERVALO, h=PASSO_DE_INTEG_MMQ, f=None, t_f=FIM_INTERVALO, y_0=CONDICAO_INICIAL):
+    def __call__(self, metodoNumerico=lobattoIIIC, t_0=INICIO_INTERVALO, h=PASSO_DE_INTEG_MMQ, f=None, t_f=FIM_INTERVALO, y_0=CONDICAO_INICIAL):
         if f is None:
             f = self.f(h)
         return metodoNumerico(t_0, t_f, h, f, y_0, 4)[1]
@@ -79,14 +89,6 @@ class Y():
 
 def modeloDeMarketplace():
     # instancia modelo de Marketplace
-    # parametrosIniciais = [0.049512924, 0.095579906, 0.025336629, 0.028506817, 0.027093797, 0.079573898,\
-    #                       0.012027065, 0.058315987, 0.035072117, 0.068207706, 0.0027021291]
-    # parametrosIniciais = [4.95129241e-02, 9.55799060e-02, 2.53366289e-02, 1.62442210e+01,\
-    #                       1.62428067e+01, 7.95738981e-02, 1.20270647e-02, 5.83159869e-02,\
-    #                       4.04535015e+03, 4.04524687e+03, 2.70212910e-03]
-    # parametrosIniciais = [4.95129241e-03,9.55799060e-02,2.53366289e-02,2.96214093e+01,\
-    #                       2.96199950e+01,7.95738981e-03,1.20270647e-02,5.83159869e-02,\
-    #                       4.51468962e+03,3.57590740e+03,2.70212910e-03]
     parametrosIniciais = [
                             0.03,   # p_B 
                             0.4,    # q_B
@@ -106,26 +108,44 @@ def modeloDeMarketplace():
 
     # inicialização do algoritmo de aproximação de parâmetros de EDOs pelo método de Gauss-Newton
     t_f = 20
-    n = 2**15
+    n = 2**10
     dados = modelo_e(t_0=0, h=t_f/n, t_f=t_f, y_0=[0,0])
    
     # perturba parâmetros para usá-los como estimativa inicial do método
-    param = perturbarParametros(modelo_e,porcentagem=0.03)
+    param = perturbarParametros(modelo_e,porcentagem=0.20)
+    # param = [2.95463844e-02,4.36487449e-01,8.92674823e-03,5.73971093e-01,\
+    #          1.14448375e-01,2.38792845e-02,2.86940598e-01,1.62183356e-02,\
+    #          2.76638789e-01,2.23807143e-01,9.93812423e-06]
+    # param = [2.72755804e-02,3.90750161e-01,7.27950147e-03,4.62749593e-01,\
+    #          1.00771391e-01,1.93516514e-02,2.23064845e-01,2.41850508e-02,\
+    #          3.48081945e-01,1.77421822e-01,1.03287074e-05]
+    # param = [3.28060823e-02,4.10469077e-01,1.19613572e-02,5.13892706e-01,\
+    #  1.09366351e-01,1.69138571e-02,2.63875243e-01,1.70391657e-02,\
+    #  3.18524777e-01,1.90113773e-01,8.13892255e-06]
+    param = [2.48972907e-02,3.84929223e-01,1.14376325e-02,4.99074190e-01,\
+             1.05749633e-01,2.09003018e-02,2.83413625e-01,1.64831541e-02,\
+             3.12564945e-01,2.27612676e-01,9.21041546e-06]
     modelo = Marketplace(param, precoExponencial, publicidadeLinear)
     
     print("Estimativa inicial dos parâmetros: " + str(param))
    
     # aplica Gauss-Newton
-    param = gaussNewton(dados, modelo, t_0=0, h=t_f/n, t_f=t_f, y_0=[0,0], perturbacao=1e-12)
+    n = 2**10
+    param = gaussNewton(dados, modelo, N=15, t_0=0, h=t_f/n, t_f=t_f, y_0=[0,0], perturbacao=1e-10, step=1)
     modelo.setParametros(param)
     
     print("Resultado de GaussNewton: " + str(param))
    
-    print("Tabela de Convergência para o Método de Lobato IIIC:\n")
+    print("Tabela de Convergência para o Método de Lobatto IIIC:\n")
 
-    verificarMarketplace(modelo_e, t_0=0, t_f=t_f, y_0=[0,0])
-    modelo_e = Marketplace(parametrosIniciais, precoLogistico, publicidadeLinear)
-    verificarMarketplace(modelo_e, t_0=0, t_f=t_f, y_0=[0,0])
+    solucao = verificarMarketplace(modelo, t_0=0, t_f=t_f, y_0=[0,0])
+    # print(np.argwhere(np.array([y[0] for y in solucao]) >= MAX_B/2))
+    # print(np.argwhere(np.array([y[1] for y in solucao]) >= MAX_V/2))
+    modelo = Marketplace(parametrosIniciais, precoLogistico, publicidadeLinear)
+    solucao = verificarMarketplace(modelo, t_0=0, t_f=t_f, y_0=[0,0])
+    # print(np.argwhere(np.array([y[0] for y in solucao]) >= MAX_B/2))
+    # print(np.argwhere(np.array([y[1] for y in solucao]) >= MAX_V/2))
+    
 
 # Modelo utilizado para cálculo dos parâmetros e discretização do modelo
 class Marketplace():
@@ -170,7 +190,7 @@ class Marketplace():
                                        (p_v + q_v * (y[1]/MAX_V) + gamma_v * (y[0]/MAX_B)) * (MAX_V - y[1]) *\
                                         (1 + alpha_v * (preco(t)-preco(t-h))/preco(t-h) + beta_v * max(0,(publicidade(t) - publicidade(t-h))/publicidade(t-h))) - k*y[1]*y[1]])
 
-    def __call__(self, metodoNumerico=lobatoIIIC, t_0=INICIO_INTERVALO, h=PASSO_DE_INTEG_MMQ, f=None, t_f=FIM_INTERVALO, y_0=CONDICAO_INICIAL):
+    def __call__(self, metodoNumerico=lobattoIIIC, t_0=INICIO_INTERVALO, h=PASSO_DE_INTEG_MMQ, f=None, t_f=FIM_INTERVALO, y_0=CONDICAO_INICIAL):
         if f is None:
             f = self.f(h=h)
         return metodoNumerico(t_0, t_f, h, f, y_0, 4)[1]
@@ -184,14 +204,14 @@ class Marketplace():
     def copy(self):
         return Marketplace(self.__parametros, self.__preco, self.__publicidade)
 
-def precoExponencial(t, precoInicial=5, precoFinal=20, constanteDeTempo=1):
+def precoExponencial(t, precoInicial=5, precoFinal=20, constanteDeTempo=5):
     return precoFinal + (precoInicial - precoFinal)*np.exp(-t/constanteDeTempo)
 
-def precoLogistico(t, precoInicial=5, precoFinal=20, taxaDeCrescimento=1):
+def precoLogistico(t, precoInicial=5, precoFinal=20, taxaDeCrescimento=5):
     t_0 = (1/taxaDeCrescimento) * np.log(precoFinal/precoInicial - 1)
     return precoFinal/(1 + np.exp(-taxaDeCrescimento * (t - t_0)))
 
-def publicidadeLinear(t, publicidadeInicial=5, taxaDeCrescimento=0.1):
+def publicidadeLinear(t, publicidadeInicial=5, taxaDeCrescimento=1):
     return publicidadeInicial + taxaDeCrescimento * t
 
 if __name__ == "__main__":

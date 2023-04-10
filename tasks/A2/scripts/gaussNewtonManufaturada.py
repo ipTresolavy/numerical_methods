@@ -3,6 +3,7 @@
 
 import matplotlib.pyplot as plt
 import numpy as np
+from lobato import lobatoIIIC
 
 DEBUG = 0
 
@@ -31,12 +32,12 @@ def f_parametros(param):
 # com Método das Aproximações Sucessivas
 def _lobatoIIIC_ordem2(t_0, T, h_n, f, y_0):
 
-    t = np.arange(t_0, T + h_n, h_n)
+    t = np.arange(t_0, T, h_n)
 
     # condição inicial
     y = [np.array(y_0)]
 
-    for t_k in t[:-1]:
+    for t_k in t:
         # o chute inicial dos coeficientes é resultado
         # da aplicação método de Euler Modificado
         k_1 = f(t_k      , y[-1])
@@ -69,12 +70,12 @@ def _lobatoIIIC_ordem2(t_0, T, h_n, f, y_0):
 # com Método das Aproximações Sucessivas
 def _lobatoIIIC_ordem4(t_0, T, h_n, f, y_0):
 
-    t = np.arange(t_0, T + h_n, h_n)
+    t = np.arange(t_0, T, h_n)
 
     # condição inicial
     y = [np.array(y_0)]
 
-    for t_k in t[:-1]:
+    for t_k in t:
         # o chute inicial dos coeficientes é resultado
         # da aplicação do Runge-Kutta de ordem 3 (RK33)
         k_1 = f(t_k        , y[-1])
